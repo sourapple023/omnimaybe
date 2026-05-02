@@ -4,9 +4,274 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Omni|Maybe - AI with Gemini 2.5 Flash</title>
-    <link rel="stylesheet" href="style.css">
     <!-- Google Generative AI SDK - for client-side use -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
+    
+    <style>
+        :root {
+            --primary-color: #6a0dad; /* Deep Purple */
+            --primary-dark: #4b0082;
+            --secondary-color: #00bcd4; /* Cyan */
+            --text-color: #333;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --error-color: #d32f2f;
+            --warning-color: #ff9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        header h1 .pipe {
+            color: var(--secondary-color);
+            margin: 0 5px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+
+        main {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .card h2 {
+            color: var(--primary-dark);
+            margin-top: 0;
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card p {
+            margin-bottom: 1rem;
+        }
+
+        .api-key-warning {
+            font-size: 0.9em;
+            color: var(--warning-color);
+            background-color: #fffde7; /* Light yellow background */
+            border-left: 5px solid var(--warning-color);
+            padding: 10px 15px;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        input[type="password"],
+        textarea {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        input[type="password"]:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.2);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit; /* Inherit font from body */
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            white-space: nowrap; /* Prevent button text from wrapping */
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .secondary-btn {
+            background-color: #757575; /* Gray */
+            padding: 8px 15px;
+            font-size: 0.95rem;
+        }
+
+        .secondary-btn:hover {
+            background-color: #616161;
+        }
+
+        .api-key-display {
+            text-align: right;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .api-key-display button {
+            margin-left: 10px;
+        }
+
+        #loading-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .response-card {
+            background-color: #f9f9f9;
+            border-left: 5px solid var(--secondary-color);
+            margin-top: 2rem;
+        }
+
+        .response-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #response-content {
+            white-space: pre-wrap; /* Preserves whitespace and line breaks */
+            word-wrap: break-word; /* Breaks long words */
+            max-height: 500px; /* Limit height of response area */
+            overflow-y: auto; /* Add scroll if content overflows */
+            padding: 10px;
+            border: 1px solid #eee;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        .error-card {
+            background-color: #ffebee; /* Light red */
+            color: var(--error-color);
+            border-left: 5px solid var(--error-color);
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            margin-top: 3rem;
+            background-color: #e0e0e0;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2rem;
+            }
+            main {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .input-group {
+                flex-direction: column;
+                gap: 15px; /* Increase gap for vertical layout */
+            }
+            button {
+                width: 100%; /* Make buttons full width in stacked layout */
+            }
+            .api-key-display {
+                text-align: center;
+            }
+            .api-key-display button {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -53,449 +318,170 @@
         <p>&copy; 2023 Omni|Maybe. Powered by Google Gemini 2.5 Flash.</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script type="module">
+        // Import the Generative AI SDK (already handled by the CDN script tag in <head>)
+        import { GoogleGenerativeAI } from "https://cdn.jsdelivr.net/npm/@google/generative-ai";
+
+        // DOM Elements
+        const apiKeySection = document.getElementById('api-key-section');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const saveApiKeyBtn = document.getElementById('save-api-key-btn');
+        const clearApiKeyBtn = document.getElementById('clear-api-key-btn');
+        const chatSection = document.getElementById('chat-section');
+        const promptInput = document.getElementById('prompt-input');
+        const sendPromptBtn = document.getElementById('send-prompt-btn');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const responseArea = document.getElementById('response-area');
+        const responseContent = document.getElementById('response-content');
+        const errorMessage = document.getElementById('error-message');
+
+        // Global variables for Gemini API
+        let genAI;
+        let model;
+        let currentApiKey = localStorage.getItem('geminiApiKey'); // Try to load key from local storage
+
+        // --- Helper Functions ---
+
+        function showElement(element) {
+            element.classList.remove('hidden');
+        }
+
+        function hideElement(element) {
+            element.classList.add('hidden');
+        }
+
+        function displayError(message) {
+            errorMessage.textContent = message;
+            showElement(errorMessage);
+            hideElement(loadingIndicator);
+            hideElement(responseArea); // Hide previous response on error
+            console.error("Error:", message);
+        }
+
+        function clearError() {
+            hideElement(errorMessage);
+            errorMessage.textContent = '';
+        }
+
+        // --- API Key Management ---
+
+        function saveApiKey() {
+            const key = apiKeyInput.value.trim();
+            if (key) {
+                localStorage.setItem('geminiApiKey', key);
+                currentApiKey = key;
+                apiKeyInput.value = ''; // Clear input field after saving
+                clearError(); // Clear any previous error
+                initializeGenerativeModel(key);
+            } else {
+                displayError("Please enter a valid Gemini API Key.");
+            }
+        }
+
+        function clearApiKey() {
+            localStorage.removeItem('geminiApiKey');
+            currentApiKey = null;
+            hideElement(chatSection);
+            hideElement(responseArea);
+            hideElement(loadingIndicator);
+            showElement(apiKeySection);
+            promptInput.value = '';
+            responseContent.textContent = '';
+            clearError();
+            console.log("API Key cleared from local storage.");
+        }
+
+        // --- Gemini Model Initialization ---
+
+        function initializeGenerativeModel(apiKey) {
+            if (!apiKey) {
+                displayError("API Key is missing. Please enter it to start.");
+                hideElement(chatSection);
+                showElement(apiKeySection);
+                return;
+            }
+
+            try {
+                genAI = new GoogleGenerativeAI(apiKey);
+                // Use gemini-1.5-flash which is generally faster and cheaper for many tasks
+                model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                console.log("Gemini 1.5 Flash model initialized.");
+                showElement(chatSection);
+                hideElement(apiKeySection);
+                promptInput.focus(); // Focus on the prompt input for immediate use
+            } catch (e) {
+                displayError("Failed to initialize Gemini model. Please check your API key and try again. Error: " + e.message);
+                hideElement(chatSection);
+                showElement(apiKeySection);
+            }
+        }
+
+        // --- Chat Interaction ---
+
+        async function sendMessage() {
+            const prompt = promptInput.value.trim();
+            if (!prompt) {
+                displayError("Please enter a prompt before sending.");
+                return;
+            }
+            if (!model) {
+                displayError("Gemini model not initialized. Please re-enter your API key.");
+                return;
+            }
+
+            clearError();
+            showElement(loadingIndicator);
+            hideElement(responseArea); // Hide previous response
+            responseContent.textContent = ''; // Clear previous response content
+            sendPromptBtn.disabled = true;
+
+            try {
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const text = response.text();
+
+                responseContent.textContent = text;
+                showElement(responseArea);
+                promptInput.value = ''; // Clear input after sending
+            } catch (error) {
+                if (error.message.includes("API key not valid")) {
+                    displayError("Invalid API Key. Please clear and re-enter a valid Google Gemini API Key.");
+                    clearApiKey(); // Optionally clear the invalid key
+                } else if (error.message.includes("candidates from safety filters")) {
+                     displayError("Sorry, your prompt was blocked by safety filters. Please try rephrasing it.");
+                }
+                else {
+                    displayError("An error occurred while fetching response: " + error.message);
+                }
+            } finally {
+                hideElement(loadingIndicator);
+                sendPromptBtn.disabled = false;
+            }
+        }
+
+        // --- Event Listeners ---
+
+        saveApiKeyBtn.addEventListener('click', saveApiKey);
+        clearApiKeyBtn.addEventListener('click', clearApiKey);
+        sendPromptBtn.addEventListener('click', sendMessage);
+
+        // Allow pressing Enter to send the prompt
+        promptInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) { // Shift+Enter for new line
+                event.preventDefault(); // Prevent default new line behavior
+                sendMessage();
+            }
+        });
+
+        // --- Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (currentApiKey) {
+                initializeGenerativeModel(currentApiKey);
+            } else {
+                showElement(apiKeySection);
+                apiKeyInput.focus();
+            }
+        });
+    </script>
 </body>
 </html>
-```
-
----
-
-### Step 4: `style.css` (The Looks)
-
-```css
-:root {
-    --primary-color: #6a0dad; /* Deep Purple */
-    --primary-dark: #4b0082;
-    --secondary-color: #00bcd4; /* Cyan */
-    --text-color: #333;
-    --bg-color: #f4f7f6;
-    --card-bg: #ffffff;
-    --border-color: #e0e0e0;
-    --error-color: #d32f2f;
-    --warning-color: #ff9800;
-}
-
-body {
-    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    line-height: 1.6;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1.5rem 1rem;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2.8rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-header h1 .pipe {
-    color: var(--secondary-color);
-    margin: 0 5px;
-}
-
-header p {
-    font-size: 1.1rem;
-    margin-top: 0.5rem;
-    opacity: 0.9;
-}
-
-main {
-    flex-grow: 1;
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.card {
-    background-color: var(--card-bg);
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    padding: 2rem;
-    border: 1px solid var(--border-color);
-}
-
-.card h2 {
-    color: var(--primary-dark);
-    margin-top: 0;
-    font-size: 1.8rem;
-    border-bottom: 2px solid var(--secondary-color);
-    padding-bottom: 0.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.card p {
-    margin-bottom: 1rem;
-}
-
-.api-key-warning {
-    font-size: 0.9em;
-    color: var(--warning-color);
-    background-color: #fffde7; /* Light yellow background */
-    border-left: 5px solid var(--warning-color);
-    padding: 10px 15px;
-    margin-top: 1.5rem;
-    border-radius: 4px;
-}
-
-
-.input-group {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-}
-
-input[type="password"],
-textarea {
-    flex-grow: 1;
-    padding: 12px 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-}
-
-input[type="password"]:focus,
-textarea:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.2);
-}
-
-textarea {
-    min-height: 120px;
-    resize: vertical;
-    font-family: inherit; /* Inherit font from body */
-}
-
-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-size: 1.05rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    white-space: nowrap; /* Prevent button text from wrapping */
-}
-
-button:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-1px);
-}
-
-button:active {
-    transform: translateY(0);
-}
-
-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.secondary-btn {
-    background-color: #757575; /* Gray */
-    padding: 8px 15px;
-    font-size: 0.95rem;
-}
-
-.secondary-btn:hover {
-    background-color: #616161;
-}
-
-.api-key-display {
-    text-align: right;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-}
-.api-key-display button {
-    margin-left: 10px;
-}
-
-
-#loading-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 1.5rem;
-    font-size: 1.1rem;
-    color: var(--primary-dark);
-}
-
-.spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: var(--primary-color);
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.response-card {
-    background-color: #f9f9f9;
-    border-left: 5px solid var(--secondary-color);
-    margin-top: 2rem;
-}
-
-.response-card h3 {
-    color: var(--primary-color);
-    margin-top: 0;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-#response-content {
-    white-space: pre-wrap; /* Preserves whitespace and line breaks */
-    word-wrap: break-word; /* Breaks long words */
-    max-height: 500px; /* Limit height of response area */
-    overflow-y: auto; /* Add scroll if content overflows */
-    padding: 10px;
-    border: 1px solid #eee;
-    background-color: #fff;
-    border-radius: 5px;
-}
-
-.error-card {
-    background-color: #ffebee; /* Light red */
-    color: var(--error-color);
-    border-left: 5px solid var(--error-color);
-    margin-top: 1.5rem;
-    padding: 1rem;
-    border-radius: 8px;
-    font-weight: bold;
-}
-
-
-.hidden {
-    display: none !important;
-}
-
-footer {
-    text-align: center;
-    padding: 1.5rem 1rem;
-    margin-top: 3rem;
-    background-color: #e0e0e0;
-    color: #555;
-    font-size: 0.9rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    header h1 {
-        font-size: 2.2rem;
-    }
-    main {
-        margin: 1rem auto;
-        padding: 0 1rem;
-    }
-    .card {
-        padding: 1.5rem;
-    }
-    .input-group {
-        flex-direction: column;
-        gap: 15px; /* Increase gap for vertical layout */
-    }
-    button {
-        width: 100%; /* Make buttons full width in stacked layout */
-    }
-    .api-key-display {
-        text-align: center;
-    }
-    .api-key-display button {
-        margin-left: 0;
-        margin-top: 10px;
-    }
-}
-```
-
----
-
-### Step 5: `script.js` (The Logic)
-
-```javascript
-// Import the Generative AI SDK
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-// DOM Elements
-const apiKeySection = document.getElementById('api-key-section');
-const apiKeyInput = document.getElementById('api-key-input');
-const saveApiKeyBtn = document.getElementById('save-api-key-btn');
-const clearApiKeyBtn = document.getElementById('clear-api-key-btn');
-const chatSection = document.getElementById('chat-section');
-const promptInput = document.getElementById('prompt-input');
-const sendPromptBtn = document.getElementById('send-prompt-btn');
-const loadingIndicator = document.getElementById('loading-indicator');
-const responseArea = document.getElementById('response-area');
-const responseContent = document.getElementById('response-content');
-const errorMessage = document.getElementById('error-message');
-
-// Global variables for Gemini API
-let genAI;
-let model;
-let currentApiKey = localStorage.getItem('geminiApiKey'); // Try to load key from local storage
-
-// --- Helper Functions ---
-
-function showElement(element) {
-    element.classList.remove('hidden');
-}
-
-function hideElement(element) {
-    element.classList.add('hidden');
-}
-
-function displayError(message) {
-    errorMessage.textContent = message;
-    showElement(errorMessage);
-    hideElement(loadingIndicator);
-    hideElement(responseArea); // Hide previous response on error
-    console.error("Error:", message);
-}
-
-function clearError() {
-    hideElement(errorMessage);
-    errorMessage.textContent = '';
-}
-
-// --- API Key Management ---
-
-function saveApiKey() {
-    const key = apiKeyInput.value.trim();
-    if (key) {
-        localStorage.setItem('geminiApiKey', key);
-        currentApiKey = key;
-        apiKeyInput.value = ''; // Clear input field after saving
-        clearError(); // Clear any previous error
-        initializeGenerativeModel(key);
-    } else {
-        displayError("Please enter a valid Gemini API Key.");
-    }
-}
-
-function clearApiKey() {
-    localStorage.removeItem('geminiApiKey');
-    currentApiKey = null;
-    hideElement(chatSection);
-    hideElement(responseArea);
-    hideElement(loadingIndicator);
-    showElement(apiKeySection);
-    promptInput.value = '';
-    responseContent.textContent = '';
-    clearError();
-    console.log("API Key cleared from local storage.");
-}
-
-// --- Gemini Model Initialization ---
-
-function initializeGenerativeModel(apiKey) {
-    if (!apiKey) {
-        displayError("API Key is missing. Please enter it to start.");
-        hideElement(chatSection);
-        showElement(apiKeySection);
-        return;
-    }
-
-    try {
-        genAI = new GoogleGenerativeAI(apiKey);
-        // Use gemini-1.5-flash which is generally faster and cheaper for many tasks
-        model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        console.log("Gemini 1.5 Flash model initialized.");
-        showElement(chatSection);
-        hideElement(apiKeySection);
-        promptInput.focus(); // Focus on the prompt input for immediate use
-    } catch (e) {
-        displayError("Failed to initialize Gemini model. Please check your API key and try again. Error: " + e.message);
-        hideElement(chatSection);
-        showElement(apiKeySection);
-    }
-}
-
-// --- Chat Interaction ---
-
-async function sendMessage() {
-    const prompt = promptInput.value.trim();
-    if (!prompt) {
-        displayError("Please enter a prompt before sending.");
-        return;
-    }
-    if (!model) {
-        displayError("Gemini model not initialized. Please re-enter your API key.");
-        return;
-    }
-
-    clearError();
-    showElement(loadingIndicator);
-    hideElement(responseArea); // Hide previous response
-    responseContent.textContent = ''; // Clear previous response content
-    sendPromptBtn.disabled = true;
-
-    try {
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
-
-        responseContent.textContent = text;
-        showElement(responseArea);
-        promptInput.value = ''; // Clear input after sending
-    } catch (error) {
-        if (error.message.includes("API key not valid")) {
-            displayError("Invalid API Key. Please clear and re-enter a valid Google Gemini API Key.");
-            clearApiKey(); // Optionally clear the invalid key
-        } else if (error.message.includes("candidates from safety filters")) {
-             displayError("Sorry, your prompt was blocked by safety filters. Please try rephrasing it.");
-        }
-        else {
-            displayError("An error occurred while fetching response: " + error.message);
-        }
-    } finally {
-        hideElement(loadingIndicator);
-        sendPromptBtn.disabled = false;
-    }
-}
-
-// --- Event Listeners ---
-
-saveApiKeyBtn.addEventListener('click', saveApiKey);
-clearApiKeyBtn.addEventListener('click', clearApiKey);
-sendPromptBtn.addEventListener('click', sendMessage);
-
-// Allow pressing Enter to send the prompt
-promptInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) { // Shift+Enter for new line
-        event.preventDefault(); // Prevent default new line behavior
-        sendMessage();
-    }
-});
-
-// --- Initial Setup ---
-document.addEventListener('DOMContentLoaded', () => {
-    if (currentApiKey) {
-        initializeGenerativeModel(currentApiKey);
-    } else {
-        showElement(apiKeySection);
-        apiKeyInput.focus();
-    }
-});
