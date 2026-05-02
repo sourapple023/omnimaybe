@@ -2,576 +2,491 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omni|Maybe AI Chat - Powered by Gemini 2.5 Flash</title>
-    
-    <!-- SEO & Metadata -->
-    <meta name="description" content="Omni|Maybe: An interactive AI chat application powered by Google Gemini 2.5 Flash. Enter your API key and start conversing!">
-    <meta name="keywords" content="AI, Gemini, Google AI, Generative AI, Chatbot, Flash, Machine Learning, Web App">
-    <meta name="author" content="Your Name or Omni|Maybe"> <!-- Consider filling this in -->
-    <meta name="theme-color" content="#6a0dad"> <!-- Matches primary color for browser UI -->
-    
-    <!-- Favicon (replace with your own) -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png"> <!-- For iOS homescreen icon -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grid Gauntlet</title>
 
-    <!-- Google Fonts (Optional: for a more custom font, remove if you prefer system fonts) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- 
-        NOTE: The Google Generative AI SDK is imported directly within the JavaScript module below,
-        so the separate <script> tag here is redundant and can be removed for cleaner HTML.
-        <script type="module" src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
-    -->
-    
+    <!-- iOS Web App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAACvUlEQVR4nO2by0sVURTGz1VpBUEU2lSQkMgoaOBCi6AoYpAgaOpiA7t1wQ9Qp1K/gK5aBG11wS5F0FCh0CYJp9U6gYjQW3Q+hQYf/4Y+M+cM3M6dm/feXzg4/c49Z/Y755zzl9l77hFAIpFIJBKJxGLgNPAW2ATuAPuA0y8/7XWzCqwAN4EDwE/AAtA/R2o8A5YBR4H4z8A2YG5sMhH/AncBqg1x/0uAn2sE7wU2AHk5oHwLgBpgz3V4191+07r1C8A6YJgM5H/DPAq0m6m9B2gDrplA/lbgCqg3U3oJ0Cag1wA1wO4Sgv+0e9L1B+AasEAG8n4BvAV+bJp8C3AdqDPQWv742W9a8Q+AbcB0GcgvwB3AnbXJkX4AtAfUGOhtj1i/gGgXmO+h+H2gP+xG5B+AewfG6v/XwBqwG7gLWAo0B5H/LcB7Z744e8CdgL5Qf0f/10F+FvT/V2A6UDlQX0X/z2BvjTqLwDNgMpA/Re/J2DvD30/BzwG7gYSh/p72w34f9P+d4D+QP0n0y+AfTP1T9N+h30z9W+2L/kG0T5P+00GfB/Q/U+GfQ/QPtP+M+x/wM+bH/tG4vMGjB8A6j31n/rN5A+K+2b7nQLzJgD1jvj1h3EzoV+vftO4icBfAX1TvzYwN2K+PXHuJGABoC/qd/sLgJvAfqvfvw3Yx+o3R7qdwFeA+anvVdDviX0j+r3+sQHcAtQf+b0B/Qh2f+j2AvoV7N+GfQv2L8B9g/YvwL3D9i/AHcB6YPxGfQdQCvT7R92cAtQ/4tsR/Q/2L8BbgI/A7g3/vA7YH5iOAf2B2YrgF9iPgX0z9g2g2D/bzwA7ANXAYmALUD/bzgA7ANWAamAbUNu77s4BOwBdgGpgK1Df62h2AtgAqgBUBtqB2u/RngL2A2pgA1A7Uf+zI/sEAEolEIpFIIhFIPsC9z8k/WwK+tAIAAAAASUVORK5CYII="> <!-- A simple square icon base64 encoded -->
+
     <style>
-        /* Universal box-sizing for consistent layout */
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-color: #6a0dad; /* Deep Purple */
-            --primary-dark: #4b0082;
-            --secondary-color: #00bcd4; /* Cyan */
-            --text-color: #333;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --border-color: #e0e0e0;
-            --error-color: #d32f2f;
-            --warning-color: #ff9800;
-            --success-color: #4caf50; /* Added for potential future use */
-            --font-family-base: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* Updated with Inter */
-        }
-
+        /* Global Styles */
         body {
-            font-family: var(--font-family-base); /* Using the new font variable */
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            overflow: hidden; /* Prevent scrolling */
+            background-color: #1a1a1a;
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-        }
-
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2.8rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Subtle shadow for text */
-        }
-
-        header h1 .pipe {
-            color: var(--secondary-color);
-            margin: 0 5px;
-        }
-
-        header p {
-            font-size: 1.1rem;
-            margin-top: 0.5rem;
-            opacity: 0.9;
-        }
-
-        main {
-            flex-grow: 1;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            width: 100%; /* Ensure main takes full width on smaller screens */
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            padding: 2rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .card h2 {
-            color: var(--primary-dark);
-            margin-top: 0;
-            font-size: 1.8rem;
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .card p {
-            margin-bottom: 1rem;
-        }
-
-        .api-key-warning {
-            font-size: 0.9em;
-            color: var(--warning-color);
-            background-color: #fffde7; /* Light yellow background */
-            border-left: 5px solid var(--warning-color);
-            padding: 10px 15px;
-            margin-top: 1.5rem;
-            border-radius: 4px;
-            line-height: 1.4;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            align-items: stretch; /* Ensure items stretch to fill height */
-        }
-
-        input[type="password"],
-        textarea {
-            flex-grow: 1;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            outline: none;
-            font-family: inherit; /* Inherit font from body */
-            color: var(--text-color);
-        }
-
-        input[type="password"]:focus,
-        textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.2);
-        }
-
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            white-space: nowrap; /* Prevent button text from wrapping */
-            font-weight: 500;
-        }
-
-        button:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px); /* Slightly more prominent lift */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        button:active {
-            transform: translateY(0);
-            box-shadow: none;
-        }
-
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            transform: none; /* No lift when disabled */
-            box-shadow: none;
-        }
-
-        .secondary-btn {
-            background-color: #757575; /* Gray */
-            padding: 8px 15px;
-            font-size: 0.95rem;
-        }
-
-        .secondary-btn:hover {
-            background-color: #616161;
-            transform: translateY(-1px); /* Less prominent lift for secondary */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .api-key-display {
-            text-align: right;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            display: flex; /* Flexbox for alignment */
-            justify-content: flex-end; /* Push content to right */
-            align-items: center; /* Vertically align */
-            gap: 10px; /* Space between text and button */
-        }
-        .api-key-display p {
-            margin: 0; /* Remove default paragraph margin */
-        }
-
-        #loading-indicator {
-            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-top: 1.5rem;
-            font-size: 1.1rem;
-            color: var(--primary-dark);
-            font-weight: 500;
+            min-height: 100vh;
+            -webkit-user-select: none; /* Disable text selection on iOS */
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: none; /* Prevent browser default touch actions like pinch-zoom */
         }
 
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--primary-color);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
+        canvas {
+            background-color: #333;
+            border: 2px solid #555;
+            display: block;
+            image-rendering: pixelated; /* Sharp pixels for retro feel */
+            max-width: 95vw; /* Ensure canvas fits on smaller screens */
+            max-height: 95vh;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .response-card {
-            background-color: #f9f9f9;
-            border-left: 5px solid var(--secondary-color);
-            margin-top: 2rem;
-            padding: 1.5rem 2rem; /* Adjusted padding for this card */
-        }
-
-        .response-card h3 {
-            color: var(--primary-dark); /* Changed to dark primary for better contrast */
-            margin-top: 0;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .response-card h3::before { /* Little icon for response header */
-            content: '🤖'; /* Robot emoji or similar icon */
+        #game-info {
+            margin-top: 10px;
             font-size: 1.2em;
-        }
-
-        #response-content {
-            white-space: pre-wrap; /* Preserves whitespace and line breaks */
-            word-wrap: break-word; /* Breaks long words */
-            max-height: 500px; /* Limit height of response area */
-            overflow-y: auto; /* Add scroll if content overflows */
-            padding: 15px; /* Slightly more padding */
-            border: 1px solid #eee;
-            background-color: #fff;
-            border-radius: 5px;
-            line-height: 1.7; /* Improved readability for AI text */
-            font-size: 1.05rem;
-        }
-
-        .error-card {
-            background-color: #ffebee; /* Light red */
-            color: var(--error-color);
-            border-left: 5px solid var(--error-color);
-            margin-top: 1.5rem;
-            padding: 1rem 1.5rem; /* Adjusted padding */
-            border-radius: 8px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .error-card::before { /* Little icon for error header */
-            content: '⚠️';
-            font-size: 1.2em;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        footer {
             text-align: center;
-            padding: 1.5rem 1rem;
-            margin-top: 3rem;
-            background-color: #e0e0e0;
-            color: #555;
-            font-size: 0.9rem;
-            border-top: 1px solid #ccc; /* Subtle top border */
+            padding: 5px;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2.2rem;
+        #instructions {
+            margin: 20px;
+            font-size: 0.9em;
+            max-width: 80vw;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        #restart-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        #restart-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        #restart-btn:active {
+            background-color: #004085;
+            transform: translateY(1px);
+        }
+
+        /* Responsive adjustments for very small screens */
+        @media (max-width: 400px) {
+            #game-info {
+                font-size: 1em;
             }
-            main {
-                margin: 1rem auto;
-                padding: 0 1rem;
+            #instructions {
+                font-size: 0.8em;
+                margin: 10px;
             }
-            .card {
-                padding: 1.5rem;
-            }
-            .input-group {
-                flex-direction: column;
-                gap: 15px; /* Increase gap for vertical layout */
-            }
-            button {
-                width: 100%; /* Make buttons full width in stacked layout */
-            }
-            .api-key-display {
-                flex-direction: column; /* Stack text and button */
-                text-align: center;
-                gap: 5px; /* Adjust gap */
-            }
-            .api-key-display button {
-                margin-top: 10px; /* Space between text and button when stacked */
-                width: auto; /* Allow button to size naturally */
-            }
-            .response-card, .error-card {
-                padding: 1rem 1.2rem;
-            }
-            #response-content {
-                padding: 10px;
+            #restart-btn {
+                padding: 10px 20px;
+                font-size: 1em;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Omni<span class="pipe">|</span>Maybe</h1>
-        <p>Your interactive portal to Gemini 2.5 Flash AI.</p>
-    </header>
+    <canvas id="gameCanvas"></canvas>
+    <div id="game-info">
+        Level: <span id="level-display">1</span> | Score: <span id="score-display">0</span>
+    </div>
+    <button id="restart-btn">Restart Level</button>
+    <div id="instructions">
+        Swipe anywhere on the screen to move the blue square. Avoid red blocks and green enemies. Reach the yellow exit to advance!
+    </div>
 
-    <main>
-        <section id="api-key-section" class="card">
-            <h2>Enter Your Gemini API Key</h2>
-            <p>Your API key is stored locally in your browser's storage and is not sent to our servers.
-                This ensures your key remains private to your browser session.</p>
-            <div class="input-group">
-                <label for="api-key-input" class="hidden">Gemini API Key</label> <!-- A11y label -->
-                <input type="password" id="api-key-input" placeholder="Paste your Gemini API Key here" autocomplete="off"
-                       aria-label="Gemini API Key" required> <!-- A11y & validation -->
-                <button id="save-api-key-btn" type="button">Save Key & Start Chat</button>
-            </div>
-            <p class="api-key-warning" role="alert" aria-live="polite">
-                <strong style="color: #f0c200;">Warning:</strong> For client-side API calls, your key is visible in network requests.
-                This method is suitable for demos and personal projects, but use with caution for sensitive production applications.
-            </p>
-        </section>
+    <script>
+        // --- Game Configuration ---
+        const GRID_SIZE = 25; // Cells per side (e.g., 25x25 grid)
+        const CELL_SIZE = 20; // Pixels per cell. Will be adjusted for responsiveness.
+        let actualCellSize; // Dynamic cell size based on screen
+        const PLAYER_COLOR = '#007bff'; // Blue
+        const OBSTACLE_COLOR = '#dc3545'; // Red
+        const ENEMY_COLOR = '#28a745'; // Green
+        const EXIT_COLOR = '#ffc107'; // Yellow
+        const GRID_COLOR = '#444'; // For grid lines
+        const BACKGROUND_COLOR = '#333';
 
-        <section id="chat-section" class="card hidden">
-            <div class="api-key-display">
-                <p>Gemini API Key Loaded.</p>
-                <button id="clear-api-key-btn" class="secondary-btn" type="button">Change/Clear Key</button>
-            </div>
+        const OBSTACLE_COUNT = 0.1; // Percentage of cells that are obstacles
+        const ENEMY_COUNT = 0.02; // Percentage of cells that are enemies (or number per level)
+        const ENEMY_MOVE_INTERVAL = 400; // ms between enemy moves
+        const PLAYER_MOVE_DURATION = 100; // ms for player movement animation
 
-            <h2>What's on your mind?</h2>
-            <label for="prompt-input" class="hidden">Type your prompt here</label> <!-- A11y label -->
-            <textarea id="prompt-input" placeholder="Type your prompt here... (e.g., 'Write a short story about a time-traveling cat.')"
-                      rows="6" aria-label="AI Prompt Input" required></textarea> <!-- A11y & validation -->
-            <button id="send-prompt-btn" type="button">Ask Omni<span class="pipe">|</span>Maybe</button>
+        // --- Game State ---
+        let canvas, ctx;
+        let gameActive = false;
+        let gameGrid = []; // 2D array representing the game board
+        let player = { x: 0, y: 0 };
+        let exit = { x: 0, y: 0 };
+        let enemies = [];
+        let level = 1;
+        let score = 0;
+        let playerMoving = false; // To prevent multiple moves at once
+        let lastEnemyMoveTime = 0;
+        let lastPlayerMoveTime = 0;
 
-            <div id="loading-indicator" class="hidden" role="status" aria-live="polite"> <!-- A11y for loading -->
-                <div class="spinner"></div>
-                Thinking...
-            </div>
+        // Touch input variables
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const SWIPE_THRESHOLD = 50; // Minimum pixels for a swipe
 
-            <div id="response-area" class="card response-card hidden" role="region" aria-live="polite" aria-labelledby="response-heading"> <!-- A11y for response -->
-                <h3 id="response-heading">Omni<span class="pipe">|</span>Maybe's Response:</h3>
-                <div id="response-content" tabindex="0"></div> <!-- Make content focusable if it's scrollable -->
-            </div>
-            <div id="error-message" class="error-card hidden" role="alert" aria-live="assertive"></div> <!-- A11y for errors -->
-        </section>
-    </main>
+        // DOM elements
+        let levelDisplay, scoreDisplay, restartButton;
 
-    <footer>
-        <p>&copy; <span id="current-year"></span> Omni|Maybe. Powered by Google Gemini 2.5 Flash.</p>
-    </footer>
+        // --- Game Initialization ---
+        function initGame() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            levelDisplay = document.getElementById('level-display');
+            scoreDisplay = document.getElementById('score-display');
+            restartButton = document.getElementById('restart-btn');
 
-    <script type="module">
-        // Import the Generative AI SDK directly within the module script
-        import { GoogleGenerativeAI } from "https://cdn.jsdelivr.net/npm/@google/generative-ai";
-
-        // DOM Elements
-        const apiKeySection = document.getElementById('api-key-section');
-        const apiKeyInput = document.getElementById('api-key-input');
-        const saveApiKeyBtn = document.getElementById('save-api-key-btn');
-        const clearApiKeyBtn = document.getElementById('clear-api-key-btn');
-        const chatSection = document.getElementById('chat-section');
-        const promptInput = document.getElementById('prompt-input');
-        const sendPromptBtn = document.getElementById('send-prompt-btn');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const responseArea = document.getElementById('response-area');
-        const responseContent = document.getElementById('response-content');
-        const errorMessage = document.getElementById('error-message');
-        const currentYearSpan = document.getElementById('current-year');
-
-        // Global variables for Gemini API
-        let genAI;
-        let model;
-        let currentApiKey = localStorage.getItem('geminiApiKey'); // Try to load key from local storage
-
-        // --- Helper Functions ---
-
-        function showElement(element) {
-            element.classList.remove('hidden');
+            setupCanvas();
+            addEventListeners();
+            resetGame(true); // Start the first level
+            gameLoop();
         }
 
-        function hideElement(element) {
-            element.classList.add('hidden');
+        function setupCanvas() {
+            // Calculate actual cell size based on screen dimensions
+            const maxCanvasWidth = Math.min(window.innerWidth * 0.95, window.innerHeight * 0.95);
+            actualCellSize = Math.floor(maxCanvasWidth / GRID_SIZE);
+            if (actualCellSize < 5) actualCellSize = 5; // Minimum size
+            if (actualCellSize > CELL_SIZE) actualCellSize = CELL_SIZE; // Max cap
+
+            canvas.width = GRID_SIZE * actualCellSize;
+            canvas.height = GRID_SIZE * actualCellSize;
         }
 
-        function displayError(message) {
-            errorMessage.textContent = message;
-            showElement(errorMessage);
-            hideElement(loadingIndicator);
-            hideElement(responseArea); // Hide previous response on error
-            // Announce the error message to screen readers
-            errorMessage.focus(); // Optionally focus on the error message
-            console.error("Error:", message);
+        function addEventListeners() {
+            window.addEventListener('resize', setupCanvas); // Responsive canvas
+
+            // Touch controls
+            canvas.addEventListener('touchstart', handleTouchStart, false);
+            canvas.addEventListener('touchmove', handleTouchMove, false);
+            canvas.addEventListener('touchend', handleTouchEnd, false);
+            canvas.addEventListener('contextmenu', e => e.preventDefault()); // Prevent long-press context menu
+
+            // Keyboard controls (for desktop testing or if external keyboard used)
+            window.addEventListener('keydown', handleKeyDown);
+
+            restartButton.addEventListener('click', () => resetGame(false)); // Restart current level
         }
 
-        function clearError() {
-            hideElement(errorMessage);
-            errorMessage.textContent = '';
-        }
+        // --- Level Generation ---
+        function generateLevel() {
+            gameGrid = Array.from({ length: GRID_SIZE }, () =>
+                Array.from({ length: GRID_SIZE }, () => 0) // 0: empty, 1: obstacle, 2: enemy
+            );
+            enemies = [];
 
-        // --- API Key Management ---
+            // Place player at top-left
+            player.x = 0;
+            player.y = 0;
+            gameGrid[player.y][player.x] = 'P'; // Mark player position
 
-        function saveApiKey() {
-            const key = apiKeyInput.value.trim();
-            if (key) {
-                localStorage.setItem('geminiApiKey', key);
-                currentApiKey = key;
-                apiKeyInput.value = ''; // Clear input field after saving
-                clearError(); // Clear any previous error
-                initializeGenerativeModel(key);
-            } else {
-                displayError("Please enter a valid Gemini API Key.");
+            // Place exit at bottom-right
+            exit.x = GRID_SIZE - 1;
+            exit.y = GRID_SIZE - 1;
+            gameGrid[exit.y][exit.x] = 'E'; // Mark exit position
+
+            // Randomly place obstacles
+            const numObstacles = Math.floor(GRID_SIZE * GRID_SIZE * OBSTACLE_COUNT);
+            for (let i = 0; i < numObstacles; i++) {
+                let ox, oy;
+                do {
+                    ox = Math.floor(Math.random() * GRID_SIZE);
+                    oy = Math.floor(Math.random() * GRID_SIZE);
+                } while (gameGrid[oy][ox] !== 0 || (ox === player.x && oy === player.y) || (ox === exit.x && oy === exit.y));
+                gameGrid[oy][ox] = 1; // Obstacle
+            }
+
+            // Randomly place enemies
+            const numEnemies = Math.floor(GRID_SIZE * GRID_SIZE * ENEMY_COUNT);
+            for (let i = 0; i < numEnemies; i++) {
+                let ex, ey;
+                do {
+                    ex = Math.floor(Math.random() * GRID_SIZE);
+                    ey = Math.floor(Math.random() * GRID_SIZE);
+                } while (gameGrid[ey][ex] !== 0 || (ex === player.x && ey === player.y) || (ex === exit.x && ey === exit.y));
+                gameGrid[ey][ex] = 2; // Enemy
+                enemies.push({ x: ex, y: ey, dx: 0, dy: 0 }); // Enemies start static
+            }
+
+            // Simple path check: ensure start/end are not immediately blocked by a solid wall of obstacles
+            // This is not a full maze solver, just prevents impossible levels from the start
+            if (!isPathPossible(player.x, player.y, exit.x, exit.y)) {
+                console.log("Generated potentially unsolvable level, regenerating...");
+                generateLevel(); // Regenerate if basic path is blocked
             }
         }
 
-        function clearApiKey() {
-            localStorage.removeItem('geminiApiKey');
-            currentApiKey = null;
-            hideElement(chatSection);
-            hideElement(responseArea);
-            hideElement(loadingIndicator);
-            showElement(apiKeySection);
-            apiKeyInput.value = ''; // Ensure input is clear
-            apiKeyInput.focus(); // Focus for immediate re-entry
-            promptInput.value = '';
-            responseContent.textContent = '';
-            clearError();
-            console.log("API Key cleared from local storage.");
-        }
+        // Basic BFS for path checking (simplified to check *any* path)
+        function isPathPossible(startX, startY, targetX, targetY) {
+            const queue = [{x: startX, y: startY}];
+            const visited = new Set();
+            visited.add(`${startX},${startY}`);
 
-        // --- Gemini Model Initialization ---
+            while (queue.length > 0) {
+                const {x, y} = queue.shift();
 
-        function initializeGenerativeModel(apiKey) {
-            if (!apiKey) {
-                displayError("API Key is missing. Please enter it to start.");
-                hideElement(chatSection);
-                showElement(apiKeySection);
-                return;
-            }
-
-            try {
-                genAI = new GoogleGenerativeAI(apiKey);
-                // Use gemini-1.5-flash which is generally faster and cheaper for many tasks
-                model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-                console.log("Gemini 1.5 Flash model initialized.");
-                showElement(chatSection);
-                hideElement(apiKeySection);
-                promptInput.focus(); // Focus on the prompt input for immediate use
-            } catch (e) {
-                displayError("Failed to initialize Gemini model. Please check your API key and try again. Error: " + e.message);
-                hideElement(chatSection);
-                showElement(apiKeySection);
-            }
-        }
-
-        // --- Chat Interaction ---
-
-        async function sendMessage() {
-            const prompt = promptInput.value.trim();
-            if (!prompt) {
-                displayError("Please enter a prompt before sending.");
-                return;
-            }
-            if (!model) {
-                displayError("Gemini model not initialized. Please re-enter your API key.");
-                return;
-            }
-
-            clearError();
-            showElement(loadingIndicator);
-            hideElement(responseArea); // Hide previous response
-            responseContent.textContent = ''; // Clear previous response content
-            sendPromptBtn.disabled = true;
-            promptInput.disabled = true; // Disable input during request
-
-            try {
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                const text = response.text();
-
-                responseContent.textContent = text;
-                showElement(responseArea);
-                promptInput.value = ''; // Clear input after sending
-                responseArea.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to response
-            } catch (error) {
-                if (error.message.includes("API key not valid")) {
-                    displayError("Invalid API Key. Please clear and re-enter a valid Google Gemini API Key.");
-                    clearApiKey(); // Clear the invalid key to force re-entry
-                } else if (error.message.includes("candidates from safety filters")) {
-                     displayError("Sorry, your prompt was blocked by safety filters. Please try rephrasing it.");
-                } else if (error.message.includes("quota")) {
-                    displayError("You have exceeded your API quota. Please check your Google Cloud Console for details.");
+                if (x === targetX && y === targetY) {
+                    return true;
                 }
-                else {
-                    displayError("An unexpected error occurred while fetching response: " + error.message);
+
+                const neighbors = [
+                    {dx: 0, dy: -1}, // Up
+                    {dx: 0, dy: 1},  // Down
+                    {dx: -1, dy: 0}, // Left
+                    {dx: 1, dy: 0}   // Right
+                ];
+
+                for (const {dx, dy} of neighbors) {
+                    const nx = x + dx;
+                    const ny = y + dy;
+
+                    if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE &&
+                        gameGrid[ny][nx] !== 1 && // Not an obstacle
+                        !visited.has(`${nx},${ny}`)) {
+                        visited.add(`${nx},${ny}`);
+                        queue.push({x: nx, y: ny});
+                    }
                 }
-            } finally {
-                hideElement(loadingIndicator);
-                sendPromptBtn.disabled = false;
-                promptInput.disabled = false; // Re-enable input
-                promptInput.focus(); // Return focus to the input field
+            }
+            return false;
+        }
+
+        // --- Game Loop and Updates ---
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update() {
+            if (!gameActive) return;
+
+            const now = Date.now();
+
+            // Player animation update
+            if (playerMoving && now - lastPlayerMoveTime >= PLAYER_MOVE_DURATION) {
+                playerMoving = false;
+            }
+
+            // Enemy movement
+            if (now - lastEnemyMoveTime >= ENEMY_MOVE_INTERVAL) {
+                moveEnemies();
+                lastEnemyMoveTime = now;
+            }
+
+            checkCollisions();
+            checkWinCondition();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = BACKGROUND_COLOR;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid lines
+            ctx.strokeStyle = GRID_COLOR;
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i <= GRID_SIZE; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * actualCellSize, 0);
+                ctx.lineTo(i * actualCellSize, canvas.height);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(0, i * actualCellSize);
+                ctx.lineTo(canvas.width, i * actualCellSize);
+                ctx.stroke();
+            }
+
+            // Draw game elements
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    const cellValue = gameGrid[y][x];
+                    if (cellValue === 1) { // Obstacle
+                        ctx.fillStyle = OBSTACLE_COLOR;
+                        ctx.fillRect(x * actualCellSize, y * actualCellSize, actualCellSize, actualCellSize);
+                    }
+                }
+            }
+
+            // Draw enemies
+            enemies.forEach(enemy => {
+                ctx.fillStyle = ENEMY_COLOR;
+                ctx.fillRect(enemy.x * actualCellSize, enemy.y * actualCellSize, actualCellSize, actualCellSize);
+            });
+
+            // Draw exit
+            ctx.fillStyle = EXIT_COLOR;
+            ctx.fillRect(exit.x * actualCellSize, exit.y * actualCellSize, actualCellSize, actualCellSize);
+
+            // Draw player (maybe slightly smaller for animation effect)
+            ctx.fillStyle = PLAYER_COLOR;
+            const playerRenderSize = playerMoving ? actualCellSize * 0.8 : actualCellSize;
+            const playerRenderOffset = (actualCellSize - playerRenderSize) / 2;
+            ctx.fillRect(player.x * actualCellSize + playerRenderOffset,
+                         player.y * actualCellSize + playerRenderOffset,
+                         playerRenderSize, playerRenderSize);
+        }
+
+        // --- Game Logic ---
+        function movePlayer(dx, dy) {
+            if (!gameActive || playerMoving) return;
+
+            const newX = player.x + dx;
+            const newY = player.y + dy;
+
+            if (newX >= 0 && newX < GRID_SIZE &&
+                newY >= 0 && newY < GRID_SIZE &&
+                gameGrid[newY][newX] !== 1) // Not an obstacle
+            {
+                player.x = newX;
+                player.y = newY;
+                playerMoving = true;
+                lastPlayerMoveTime = Date.now();
+                score++; // Increment score for each move
+                updateDisplay();
             }
         }
 
-        // --- Event Listeners ---
+        function moveEnemies() {
+            enemies.forEach(enemy => {
+                // Simple random movement: try to move one step in a random direction
+                const possibleMoves = [
+                    { dx: 0, dy: -1 }, { dx: 0, dy: 1 },
+                    { dx: -1, dy: 0 }, { dx: 1, dy: 0 }
+                ];
+                const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
 
-        saveApiKeyBtn.addEventListener('click', saveApiKey);
-        clearApiKeyBtn.addEventListener('click', clearApiKey);
-        sendPromptBtn.addEventListener('click', sendMessage);
+                const newX = enemy.x + move.dx;
+                const newY = enemy.y + move.dy;
 
-        // Allow pressing Enter to send the prompt
-        promptInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' && !event.shiftKey) { // Shift+Enter for new line
-                event.preventDefault(); // Prevent default new line behavior
-                sendMessage();
+                // Check boundaries and no collisions with obstacles or player
+                if (newX >= 0 && newX < GRID_SIZE &&
+                    newY >= 0 && newY < GRID_SIZE &&
+                    gameGrid[newY][newX] !== 1 && // Not an obstacle
+                    !(newX === player.x && newY === player.y)) // Not on player's current spot
+                {
+                    enemy.x = newX;
+                    enemy.y = newY;
+                }
+            });
+        }
+
+        function checkCollisions() {
+            enemies.forEach(enemy => {
+                if (player.x === enemy.x && player.y === enemy.y) {
+                    gameOver();
+                }
+            });
+        }
+
+        function checkWinCondition() {
+            if (player.x === exit.x && player.y === exit.y) {
+                levelUp();
             }
-        });
+        }
 
-        // --- Initial Setup ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Set current year in footer
-            currentYearSpan.textContent = new Date().getFullYear();
+        function gameOver() {
+            gameActive = false;
+            alert(`Game Over! You reached Level ${level} with a score of ${score}.`);
+            level = 1;
+            score = 0;
+            resetGame(true); // Restart from level 1
+        }
 
-            if (currentApiKey) {
-                initializeGenerativeModel(currentApiKey);
-            } else {
-                showElement(apiKeySection);
-                apiKeyInput.focus();
+        function levelUp() {
+            gameActive = false; // Pause game for a moment
+            level++;
+            alert(`Level ${level-1} Complete! Get ready for Level ${level}!`);
+            resetGame(true);
+        }
+
+        function resetGame(newLevelOnly) {
+            gameActive = false; // Pause rendering briefly
+            if (newLevelOnly) {
+                generateLevel();
+            } else { // Restart current level
+                // Player and enemies reset to initial positions for this specific level's generation
+                const currentLevelEnemies = JSON.parse(JSON.stringify(enemies)); // Deep copy
+                generateLevel(); // Re-generates everything
+                // This means 'restart level' generates a *new* level, not the *same* level again.
+                // For a true 'restart same level', you'd need to save the initial level state.
+                // For "one-file" and "endless levels," regenerating is simpler and fits the theme.
             }
-        });
+            updateDisplay();
+            gameActive = true;
+        }
+
+        function updateDisplay() {
+            levelDisplay.textContent = level;
+            scoreDisplay.textContent = score;
+        }
+
+        // --- Input Handlers ---
+        function handleTouchStart(e) {
+            e.preventDefault(); // Prevent scrolling/zooming
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault(); // Prevent scrolling/zooming during swipe
+        }
+
+        function handleTouchEnd(e) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+
+            if (Math.abs(dx) > Math.abs(dy)) { // Horizontal swipe
+                if (Math.abs(dx) > SWIPE_THRESHOLD) {
+                    if (dx > 0) movePlayer(1, 0); // Right
+                    else movePlayer(-1, 0); // Left
+                }
+            } else { // Vertical swipe
+                if (Math.abs(dy) > SWIPE_THRESHOLD) {
+                    if (dy > 0) movePlayer(0, 1); // Down
+                    else movePlayer(0, -1); // Up
+                }
+            }
+        }
+
+        function handleKeyDown(e) {
+            switch (e.key) {
+                case 'ArrowUp':
+                case 'w':
+                    movePlayer(0, -1);
+                    break;
+                case 'ArrowDown':
+                case 's':
+                    movePlayer(0, 1);
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                    movePlayer(-1, 0);
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                    movePlayer(1, 0);
+                    break;
+            }
+        }
+
+        // Initialize the game when the window loads
+        window.addEventListener('load', initGame);
     </script>
 </body>
 </html>
