@@ -3,11 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omni|Maybe - AI with Gemini 2.5 Flash</title>
-    <!-- Google Generative AI SDK - for client-side use -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
+    <title>Omni|Maybe AI Chat - Powered by Gemini 2.5 Flash</title>
+    
+    <!-- SEO & Metadata -->
+    <meta name="description" content="Omni|Maybe: An interactive AI chat application powered by Google Gemini 2.5 Flash. Enter your API key and start conversing!">
+    <meta name="keywords" content="AI, Gemini, Google AI, Generative AI, Chatbot, Flash, Machine Learning, Web App">
+    <meta name="author" content="Your Name or Omni|Maybe"> <!-- Consider filling this in -->
+    <meta name="theme-color" content="#6a0dad"> <!-- Matches primary color for browser UI -->
+    
+    <!-- Favicon (replace with your own) -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png"> <!-- For iOS homescreen icon -->
+
+    <!-- Google Fonts (Optional: for a more custom font, remove if you prefer system fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- 
+        NOTE: The Google Generative AI SDK is imported directly within the JavaScript module below,
+        so the separate <script> tag here is redundant and can be removed for cleaner HTML.
+        <script type="module" src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
+    -->
     
     <style>
+        /* Universal box-sizing for consistent layout */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         :root {
             --primary-color: #6a0dad; /* Deep Purple */
             --primary-dark: #4b0082;
@@ -18,10 +42,12 @@
             --border-color: #e0e0e0;
             --error-color: #d32f2f;
             --warning-color: #ff9800;
+            --success-color: #4caf50; /* Added for potential future use */
+            --font-family-base: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* Updated with Inter */
         }
 
         body {
-            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--font-family-base); /* Using the new font variable */
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
@@ -45,6 +71,7 @@
             font-size: 2.8rem;
             font-weight: 700;
             letter-spacing: -0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Subtle shadow for text */
         }
 
         header h1 .pipe {
@@ -66,6 +93,7 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            width: 100%; /* Ensure main takes full width on smaller screens */
         }
 
         .card {
@@ -97,6 +125,7 @@
             padding: 10px 15px;
             margin-top: 1.5rem;
             border-radius: 4px;
+            line-height: 1.4;
         }
 
         .input-group {
@@ -104,6 +133,7 @@
             gap: 10px;
             margin-bottom: 1.5rem;
             flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            align-items: stretch; /* Ensure items stretch to fill height */
         }
 
         input[type="password"],
@@ -115,6 +145,8 @@
             font-size: 1rem;
             transition: border-color 0.2s, box-shadow 0.2s;
             outline: none;
+            font-family: inherit; /* Inherit font from body */
+            color: var(--text-color);
         }
 
         input[type="password"]:focus,
@@ -126,7 +158,6 @@
         textarea {
             min-height: 120px;
             resize: vertical;
-            font-family: inherit; /* Inherit font from body */
         }
 
         button {
@@ -139,20 +170,25 @@
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.1s ease;
             white-space: nowrap; /* Prevent button text from wrapping */
+            font-weight: 500;
         }
 
         button:hover {
             background-color: var(--primary-dark);
-            transform: translateY(-1px);
+            transform: translateY(-2px); /* Slightly more prominent lift */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         button:active {
             transform: translateY(0);
+            box-shadow: none;
         }
 
         button:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
+            transform: none; /* No lift when disabled */
+            box-shadow: none;
         }
 
         .secondary-btn {
@@ -163,15 +199,21 @@
 
         .secondary-btn:hover {
             background-color: #616161;
+            transform: translateY(-1px); /* Less prominent lift for secondary */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .api-key-display {
             text-align: right;
             font-size: 0.9rem;
             margin-bottom: 1rem;
+            display: flex; /* Flexbox for alignment */
+            justify-content: flex-end; /* Push content to right */
+            align-items: center; /* Vertically align */
+            gap: 10px; /* Space between text and button */
         }
-        .api-key-display button {
-            margin-left: 10px;
+        .api-key-display p {
+            margin: 0; /* Remove default paragraph margin */
         }
 
         #loading-indicator {
@@ -182,6 +224,7 @@
             margin-top: 1.5rem;
             font-size: 1.1rem;
             color: var(--primary-dark);
+            font-weight: 500;
         }
 
         .spinner {
@@ -201,13 +244,21 @@
             background-color: #f9f9f9;
             border-left: 5px solid var(--secondary-color);
             margin-top: 2rem;
+            padding: 1.5rem 2rem; /* Adjusted padding for this card */
         }
 
         .response-card h3 {
-            color: var(--primary-color);
+            color: var(--primary-dark); /* Changed to dark primary for better contrast */
             margin-top: 0;
             font-size: 1.5rem;
             margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .response-card h3::before { /* Little icon for response header */
+            content: '🤖'; /* Robot emoji or similar icon */
+            font-size: 1.2em;
         }
 
         #response-content {
@@ -215,10 +266,12 @@
             word-wrap: break-word; /* Breaks long words */
             max-height: 500px; /* Limit height of response area */
             overflow-y: auto; /* Add scroll if content overflows */
-            padding: 10px;
+            padding: 15px; /* Slightly more padding */
             border: 1px solid #eee;
             background-color: #fff;
             border-radius: 5px;
+            line-height: 1.7; /* Improved readability for AI text */
+            font-size: 1.05rem;
         }
 
         .error-card {
@@ -226,9 +279,16 @@
             color: var(--error-color);
             border-left: 5px solid var(--error-color);
             margin-top: 1.5rem;
-            padding: 1rem;
+            padding: 1rem 1.5rem; /* Adjusted padding */
             border-radius: 8px;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .error-card::before { /* Little icon for error header */
+            content: '⚠️';
+            font-size: 1.2em;
         }
 
         .hidden {
@@ -242,6 +302,7 @@
             background-color: #e0e0e0;
             color: #555;
             font-size: 0.9rem;
+            border-top: 1px solid #ccc; /* Subtle top border */
         }
 
         /* Responsive adjustments */
@@ -264,11 +325,19 @@
                 width: 100%; /* Make buttons full width in stacked layout */
             }
             .api-key-display {
+                flex-direction: column; /* Stack text and button */
                 text-align: center;
+                gap: 5px; /* Adjust gap */
             }
             .api-key-display button {
-                margin-left: 0;
-                margin-top: 10px;
+                margin-top: 10px; /* Space between text and button when stacked */
+                width: auto; /* Allow button to size naturally */
+            }
+            .response-card, .error-card {
+                padding: 1rem 1.2rem;
+            }
+            #response-content {
+                padding: 10px;
             }
         }
     </style>
@@ -282,44 +351,51 @@
     <main>
         <section id="api-key-section" class="card">
             <h2>Enter Your Gemini API Key</h2>
-            <p>Your API key is stored locally in your browser's storage and is not sent to our servers.</p>
+            <p>Your API key is stored locally in your browser's storage and is not sent to our servers.
+                This ensures your key remains private to your browser session.</p>
             <div class="input-group">
-                <input type="password" id="api-key-input" placeholder="Paste your Gemini API Key here" autocomplete="off">
-                <button id="save-api-key-btn">Save Key & Start Chat</button>
+                <label for="api-key-input" class="hidden">Gemini API Key</label> <!-- A11y label -->
+                <input type="password" id="api-key-input" placeholder="Paste your Gemini API Key here" autocomplete="off"
+                       aria-label="Gemini API Key" required> <!-- A11y & validation -->
+                <button id="save-api-key-btn" type="button">Save Key & Start Chat</button>
             </div>
-            <p class="api-key-warning">
-                <strong style="color: #f0c200;">Warning:</strong> For client-side API calls, your key is visible in network requests. Use with caution for sensitive production applications.
+            <p class="api-key-warning" role="alert" aria-live="polite">
+                <strong style="color: #f0c200;">Warning:</strong> For client-side API calls, your key is visible in network requests.
+                This method is suitable for demos and personal projects, but use with caution for sensitive production applications.
             </p>
         </section>
 
         <section id="chat-section" class="card hidden">
             <div class="api-key-display">
-                <p>Gemini API Key Loaded. <button id="clear-api-key-btn" class="secondary-btn">Change/Clear Key</button></p>
+                <p>Gemini API Key Loaded.</p>
+                <button id="clear-api-key-btn" class="secondary-btn" type="button">Change/Clear Key</button>
             </div>
 
             <h2>What's on your mind?</h2>
-            <textarea id="prompt-input" placeholder="Type your prompt here... (e.g., 'Write a short story about a time-traveling cat.')" rows="6"></textarea>
-            <button id="send-prompt-btn">Ask Omni<span class="pipe">|</span>Maybe</button>
+            <label for="prompt-input" class="hidden">Type your prompt here</label> <!-- A11y label -->
+            <textarea id="prompt-input" placeholder="Type your prompt here... (e.g., 'Write a short story about a time-traveling cat.')"
+                      rows="6" aria-label="AI Prompt Input" required></textarea> <!-- A11y & validation -->
+            <button id="send-prompt-btn" type="button">Ask Omni<span class="pipe">|</span>Maybe</button>
 
-            <div id="loading-indicator" class="hidden">
+            <div id="loading-indicator" class="hidden" role="status" aria-live="polite"> <!-- A11y for loading -->
                 <div class="spinner"></div>
                 Thinking...
             </div>
 
-            <div id="response-area" class="card response-card hidden">
-                <h3>Omni<span class="pipe">|</span>Maybe's Response:</h3>
-                <div id="response-content"></div>
+            <div id="response-area" class="card response-card hidden" role="region" aria-live="polite" aria-labelledby="response-heading"> <!-- A11y for response -->
+                <h3 id="response-heading">Omni<span class="pipe">|</span>Maybe's Response:</h3>
+                <div id="response-content" tabindex="0"></div> <!-- Make content focusable if it's scrollable -->
             </div>
-            <div id="error-message" class="error-card hidden"></div>
+            <div id="error-message" class="error-card hidden" role="alert" aria-live="assertive"></div> <!-- A11y for errors -->
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2023 Omni|Maybe. Powered by Google Gemini 2.5 Flash.</p>
+        <p>&copy; <span id="current-year"></span> Omni|Maybe. Powered by Google Gemini 2.5 Flash.</p>
     </footer>
 
     <script type="module">
-        // Import the Generative AI SDK (already handled by the CDN script tag in <head>)
+        // Import the Generative AI SDK directly within the module script
         import { GoogleGenerativeAI } from "https://cdn.jsdelivr.net/npm/@google/generative-ai";
 
         // DOM Elements
@@ -334,6 +410,7 @@
         const responseArea = document.getElementById('response-area');
         const responseContent = document.getElementById('response-content');
         const errorMessage = document.getElementById('error-message');
+        const currentYearSpan = document.getElementById('current-year');
 
         // Global variables for Gemini API
         let genAI;
@@ -355,6 +432,8 @@
             showElement(errorMessage);
             hideElement(loadingIndicator);
             hideElement(responseArea); // Hide previous response on error
+            // Announce the error message to screen readers
+            errorMessage.focus(); // Optionally focus on the error message
             console.error("Error:", message);
         }
 
@@ -385,6 +464,8 @@
             hideElement(responseArea);
             hideElement(loadingIndicator);
             showElement(apiKeySection);
+            apiKeyInput.value = ''; // Ensure input is clear
+            apiKeyInput.focus(); // Focus for immediate re-entry
             promptInput.value = '';
             responseContent.textContent = '';
             clearError();
@@ -434,6 +515,7 @@
             hideElement(responseArea); // Hide previous response
             responseContent.textContent = ''; // Clear previous response content
             sendPromptBtn.disabled = true;
+            promptInput.disabled = true; // Disable input during request
 
             try {
                 const result = await model.generateContent(prompt);
@@ -443,19 +525,24 @@
                 responseContent.textContent = text;
                 showElement(responseArea);
                 promptInput.value = ''; // Clear input after sending
+                responseArea.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to response
             } catch (error) {
                 if (error.message.includes("API key not valid")) {
                     displayError("Invalid API Key. Please clear and re-enter a valid Google Gemini API Key.");
-                    clearApiKey(); // Optionally clear the invalid key
+                    clearApiKey(); // Clear the invalid key to force re-entry
                 } else if (error.message.includes("candidates from safety filters")) {
                      displayError("Sorry, your prompt was blocked by safety filters. Please try rephrasing it.");
+                } else if (error.message.includes("quota")) {
+                    displayError("You have exceeded your API quota. Please check your Google Cloud Console for details.");
                 }
                 else {
-                    displayError("An error occurred while fetching response: " + error.message);
+                    displayError("An unexpected error occurred while fetching response: " + error.message);
                 }
             } finally {
                 hideElement(loadingIndicator);
                 sendPromptBtn.disabled = false;
+                promptInput.disabled = false; // Re-enable input
+                promptInput.focus(); // Return focus to the input field
             }
         }
 
@@ -475,6 +562,9 @@
 
         // --- Initial Setup ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Set current year in footer
+            currentYearSpan.textContent = new Date().getFullYear();
+
             if (currentApiKey) {
                 initializeGenerativeModel(currentApiKey);
             } else {
